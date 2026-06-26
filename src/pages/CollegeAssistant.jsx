@@ -8,7 +8,7 @@ function CollegeAssistant() {
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage = { role: "user", text: input };
@@ -16,14 +16,36 @@ function CollegeAssistant() {
     setInput("");
     setThinking(true);
 
-    // Simulate bot response (replace with real API call later)
-    setTimeout(() => {
+    try {
+      const response = await fetch("http://localhost:8000/api/college/query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ question: input }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get response from server");
+      }
+
+      const data = await response.json();
       setMessages((prev) => [
         ...prev,
-        { role: "bot", text: "This is a placeholder response. Connect your backend API here.", source: "" },
+        {
+          role: "bot",
+          text: data.answer,
+          source: data.sources && data.sources.length > 0 ? data.sources.join(", ") : "",
+        },
       ]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "bot", text: `Error: ${error.message}. Is the backend running and OpenAI or Groq API Key configured?`, source: "" },
+      ]);
+    } finally {
       setThinking(false);
-    }, 1500);
+    }
   };
 
   const handleKeyDown = (e) => {

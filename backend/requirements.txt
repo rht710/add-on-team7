@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-multipart
+sentence-transformers
+faiss-cpu
+pandas
+numpy
+pypdf
+python-docx
+openai
+python-dotenv
+tavily-python
+deepagents
