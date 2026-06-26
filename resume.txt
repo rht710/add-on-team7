@@ -1,0 +1,4 @@
+Rohit Mohan
+AI Engineer & Full Stack Developer
+Skills: Python, React, LangChain, OpenAI, LLMs
+Experience: Built RAG pipelines and agentic AI systems.
