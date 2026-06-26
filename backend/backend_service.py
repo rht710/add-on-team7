@@ -53,6 +53,7 @@ class KnowledgeBaseManager:
         # Initialize FAISS Index Flat Inner Product (for Cosine Similarity)
         self.index = faiss.IndexFlatIP(self.dimension)
         self.metadata: List[Dict[str, Any]] = []
+        self.scraped_context = ""
 
     def add_document(self, file_path: str):
         """Parse, chunk, embed, and insert a document into the FAISS index."""
@@ -97,29 +98,52 @@ class KnowledgeBaseManager:
             })
         return results
 
+    def set_scraped_context(self, college_name: str, data: dict):
+        """Format the scraped college data and store it in-memory for RAG queries."""
+        placements_str = "\n".join([f"- {p['title']}: {p['description']} (Status: {p['status']})" for p in data.get("placements", [])])
+        events_str = "\n".join([f"- {e['title']} ({e['month']} {e['day']}): {e['description']}" for e in data.get("events", [])])
+        sources_str = ", ".join(data.get("sources", []))
+        
+        self.scraped_context = (
+            f"Currently Scraped College: {college_name}\n"
+            f"Active Recruiting Companies: {data.get('active_companies', 'N/A')}\n"
+            f"Average CTC: {data.get('average_ctc', 'N/A')} LPA\n"
+            f"Verified Sources: {sources_str}\n\n"
+            f"Recent/Upcoming Placements:\n{placements_str}\n\n"
+            f"Upcoming Events & Deadlines:\n{events_str}\n"
+        )
+        print(f"Updated RAG scraped context for {college_name}")
+
     def query_with_llm(self, query: str, openai_api_key: str = None, groq_api_key: str = None, top_k: int = 3) -> Dict[str, Any]:
         """Fetch matching segments and use OpenAI or Groq to construct a natural response."""
         matches = self.search(query, top_k=top_k)
         
-        if not matches:
+        if not matches and not self.scraped_context:
             return {
-                "answer": "No relevant documents have been loaded into the knowledge base yet to answer this question.",
+                "answer": "No relevant documents or scraped college updates have been loaded into the knowledge base yet to answer this question.",
                 "sources": []
             }
             
         # Compile context
-        context_str = "\n\n".join([f"[Source: {m['source']}] {m['text']}" for m in matches])
+        context_parts = []
+        if self.scraped_context:
+            context_parts.append(f"[Live Scraped College Info]\n{self.scraped_context}")
+        for m in matches:
+            context_parts.append(f"[Source: {m['source']}] {m['text']}")
+            
+        context_str = "\n\n".join(context_parts)
         
         system_prompt = (
-            "You are a helpful college assistant. Answer the user's question using only the provided official document context. "
-            "If the answer cannot be found in the context, politely state that you do not know. "
+            "You are a helpful college assistant. Answer the user's question using the provided official document context "
+            "or the live scraped college info. If the user asks about the college searched/scraped, refer to the live scraped college info.\n"
+            "If the answer cannot be found in the context or scraped info, politely state that you do not know. "
             "Keep your answer clear, concise, and professional."
         )
         
         user_prompt = f"Context:\n{context_str}\n\nQuestion: {query}"
         response = None
         last_error = None
-
+ 
         # Try OpenAI first
         if openai_api_key:
             try:
@@ -133,9 +157,9 @@ class KnowledgeBaseManager:
                     temperature=0.3
                 )
             except Exception as e:
-                print(f"OpenAI query failed: {e}. Falling back to Groq if configured.")
+                print(f"OpenAI query failed: {e}. Trying Groq...")
                 last_error = e
-
+ 
         # Fallback to Groq if OpenAI failed or wasn't provided
         if response is None and groq_api_key:
             try:
@@ -151,13 +175,15 @@ class KnowledgeBaseManager:
             except Exception as e:
                 print(f"Groq query failed: {e}")
                 last_error = e
-
+ 
         if response is None:
-            raise Exception(f"Failed to query LLM. OpenAI and Groq both failed or were not configured. Last error: {last_error}")
+            raise Exception(f"Failed to query LLM. OpenAI and Groq both failed. Last error: {last_error}")
         
         answer = response.choices[0].message.content
         sources = list(set([m["source"] for m in matches if m["score"] > 0.3]))
-        
+        if self.scraped_context and ("scraped" in query.lower() or "live" in query.lower() or "website" in query.lower() or "placement" in query.lower() or "event" in query.lower() or "ctc" in query.lower() or "company" in query.lower()):
+            sources.append("Live Web Scraper")
+            
         return {
             "answer": answer,
             "sources": sources,

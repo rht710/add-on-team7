@@ -568,7 +568,7 @@ async def scrape_college_updates(college_name: str, keys: dict = Depends(get_api
     search_urls = list(set([res["url"] for res in search_results if res.get("url")]))
 
     if response is None:
-        return {
+        fallback_data = {
             "placements": [
                 {"title": f"Google Drive ({target_display_name})", "description": "SWE & AI Internships", "status": "Active"},
                 {"title": f"Microsoft Event ({target_display_name})", "description": "ML & Full Stack Engineering Roles", "status": "Upcoming"},
@@ -583,6 +583,8 @@ async def scrape_college_updates(college_name: str, keys: dict = Depends(get_api
             "average_ctc": "8.5",
             "sources": []
         }
+        kb.set_scraped_context(target_display_name, fallback_data)
+        return fallback_data
 
     try:
         data = json.loads(response.choices[0].message.content)
@@ -592,6 +594,9 @@ async def scrape_college_updates(college_name: str, keys: dict = Depends(get_api
             data["active_companies"] = "45+"
         if "average_ctc" not in data:
             data["average_ctc"] = "8.5"
+        
+        # Save to RAG context
+        kb.set_scraped_context(target_display_name, data)
         return data
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to parse LLM response: {str(e)}")
