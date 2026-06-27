@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 import StatCard from "../components/StatCard";
 
 function Dashboard() {
@@ -66,7 +67,7 @@ function Dashboard() {
     // Fetch dynamic documents count from backend
     const fetchDocCount = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/college/indexed-files");
+        const response = await fetch(`${API_BASE_URL}/api/college/indexed-files`);
         if (response.ok) {
           const data = await response.json();
           setDocCount(data.indexed_files ? data.indexed_files.length : 0);
@@ -88,7 +89,7 @@ function Dashboard() {
     setScrapError("");
 
     try {
-      const response = await fetch(`http://localhost:8000/api/college/scrape-updates?college_name=${encodeURIComponent(collegeName)}`);
+      const response = await fetch(`${API_BASE_URL}/api/college/scrape-updates?college_name=${encodeURIComponent(collegeName)}`);
       if (!response.ok) throw new Error("Failed to query live scraper.");
       
       const data = await response.json();

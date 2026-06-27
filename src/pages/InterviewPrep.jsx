@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_BASE_URL } from "../config";
 
 function InterviewPrep() {
   const [role, setRole] = useState("AI Engineer");
@@ -24,7 +25,7 @@ function InterviewPrep() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("http://localhost:8000/api/interview/questions", {
+      const response = await fetch(`${API_BASE_URL}/api/interview/questions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

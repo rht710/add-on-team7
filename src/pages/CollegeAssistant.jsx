@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 
 function CollegeAssistant() {
   const [messages, setMessages] = useState([
@@ -14,7 +15,7 @@ function CollegeAssistant() {
   // Fetch currently indexed files from the backend
   const fetchIndexedFiles = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/college/indexed-files");
+      const response = await fetch(`${API_BASE_URL}/api/college/indexed-files`);
       if (!response.ok) throw new Error("Failed to load indexed files.");
       const data = await response.json();
       setIndexedFiles(data.indexed_files || []);
@@ -39,7 +40,7 @@ function CollegeAssistant() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:8000/api/college/query", {
+      const response = await fetch(`${API_BASE_URL}/api/college/query`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -87,7 +88,7 @@ function CollegeAssistant() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:8000/api/college/upload", {
+      const response = await fetch(`${API_BASE_URL}/api/college/upload`, {
         method: "POST",
         body: formData,
       });

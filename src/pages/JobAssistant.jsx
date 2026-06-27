@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_BASE_URL } from "../config";
 
 function JobAssistant() {
   const [file, setFile] = useState(null);
@@ -36,7 +37,7 @@ function JobAssistant() {
     formData.append("skills_hint", skillsHint);
 
     try {
-      const response = await fetch("http://localhost:8000/api/job/analyze", {
+      const response = await fetch(`${API_BASE_URL}/api/job/analyze`, {
         method: "POST",
         body: formData,
       });
