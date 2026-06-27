@@ -5,15 +5,14 @@ function Sidebar() {
 
   const getLinkClass = (path) => {
     const isActive = location.pathname === path;
-    return `block p-3 rounded-lg transition-all ${
-      isActive ? "bg-slate-700 font-bold text-white shadow-sm" : "hover:bg-slate-850 text-slate-300 hover:text-white"
-    }`;
+    return `block p-3 rounded-lg transition-all ${isActive ? "bg-slate-700 font-bold text-white shadow-sm" : "hover:bg-slate-850 text-slate-300 hover:text-white"
+      }`;
   };
 
   return (
     <div className="w-64 bg-slate-900 text-white p-6 flex flex-col border-r border-slate-800">
       <h1 className="text-2xl font-bold mb-10 flex items-center gap-2">
-        AI Portal
+        Mentora AI
       </h1>
 
       <ul className="space-y-3">
