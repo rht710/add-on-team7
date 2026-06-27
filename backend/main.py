@@ -8,15 +8,11 @@ import requests
 import uvicorn
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
+from typing import List, Dict, Any
 from dotenv import load_dotenv
 from openai import OpenAI
-from langchain_openai import ChatOpenAI
-from langchain_groq import ChatGroq
 from tavily import TavilyClient
-from deepagents import create_deep_agent
 from langchain_core.tools import tool
 from backend_service import KnowledgeBaseManager, DocumentProcessor
 
