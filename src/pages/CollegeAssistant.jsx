@@ -120,7 +120,7 @@ function CollegeAssistant() {
         {/* Pane Header */}
         <div className="p-5 border-b border-slate-100 bg-slate-50/50">
           <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-            📚 Knowledge Base
+            Knowledge Base
           </h2>
           <p className="text-xs text-slate-500 mt-1">
             Upload guidelines, schedules, or announcements to expand the assistant's knowledge.
@@ -145,12 +145,12 @@ function CollegeAssistant() {
 
           {error && (
             <div className="mt-3 text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-100">
-              ⚠️ {error}
+              {error}
             </div>
           )}
           {success && (
             <div className="mt-3 text-xs text-green-700 bg-green-50 p-2 rounded-lg border border-green-100">
-              ✅ {success}
+              {success}
             </div>
           )}
         </div>
@@ -170,7 +170,7 @@ function CollegeAssistant() {
                   className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-100 transition text-xs font-medium text-slate-700 truncate"
                   title={filename}
                 >
-                  📄 {filename}
+                  {filename}
                 </li>
               ))}
             </ul>
@@ -184,7 +184,7 @@ function CollegeAssistant() {
         <div className="p-5 border-b border-slate-200 bg-white flex justify-between items-center">
           <div>
             <h1 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              🎓 Digital Help Desk
+              Digital Help Desk
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
               Ask rules, curricula, timelines, placements, hostel, or transport queries.
@@ -208,7 +208,7 @@ function CollegeAssistant() {
                 </div>
                 {msg.source && (
                   <span className="text-[10px] text-slate-450 mt-1 ml-1 flex items-center gap-1 font-medium">
-                    🔍 Verified Source: <span className="bg-slate-200/80 px-1.5 py-0.5 rounded text-slate-700 font-semibold">{msg.source}</span>
+                    Verified Source: <span className="bg-slate-200/80 px-1.5 py-0.5 rounded text-slate-700 font-semibold">{msg.source}</span>
                   </span>
                 )}
               </div>
@@ -235,7 +235,7 @@ function CollegeAssistant() {
                 disabled={thinking}
                 className="text-xs bg-slate-100 hover:bg-slate-200/80 text-slate-700 px-3 py-1.5 rounded-full transition font-medium border border-slate-200/40 disabled:opacity-50"
               >
-                💡 {q}
+                {q}
               </button>
             ))}
           </div>

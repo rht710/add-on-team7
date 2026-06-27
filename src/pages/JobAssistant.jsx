@@ -61,7 +61,7 @@ function JobAssistant() {
   return (
     <div className="flex-1 p-8 overflow-y-auto h-screen bg-slate-50">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">
-        💼 Job Assistant & Resume Matcher
+        Job Assistant & Resume Matcher
       </h1>
 
       {error && (
@@ -85,7 +85,7 @@ function JobAssistant() {
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
             <p className="text-gray-500 mb-2 font-medium">
-              {file ? `📄 ${file.name}` : "Drag & Drop Resume Here or Click to Browse"}
+              {file ? file.name : "Drag & Drop Resume Here or Click to Browse"}
             </p>
             <p className="text-xs text-gray-400">Supports PDF, DOCX, TXT</p>
           </div>

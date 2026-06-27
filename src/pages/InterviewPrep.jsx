@@ -42,7 +42,7 @@ function InterviewPrep() {
   return (
     <div className="flex-1 p-8 bg-slate-50 h-screen overflow-y-auto">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">
-        🎤 Interview Preparation
+        Interview Preparation
       </h1>
 
       {error && (

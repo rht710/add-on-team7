@@ -13,7 +13,7 @@ function Sidebar() {
   return (
     <div className="w-64 bg-slate-900 text-white p-6 flex flex-col border-r border-slate-800">
       <h1 className="text-2xl font-bold mb-10 flex items-center gap-2">
-        🎓 AI Portal
+        AI Portal
       </h1>
 
       <ul className="space-y-3">

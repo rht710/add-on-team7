@@ -120,7 +120,7 @@ function Dashboard() {
       <div className="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-8 mb-8 text-white shadow-lg relative overflow-hidden">
         <div className="relative z-10">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-            🎓 AI Campus & Career Assistant
+            AI Campus & Career Assistant
           </h1>
           <p className="text-blue-100 mt-2 max-w-xl text-sm md:text-base leading-relaxed">
             Welcome to your unified workspace. Manage college guidelines, track key campus events, analyze job profiles, and prepare for technical interviews.
@@ -134,7 +134,7 @@ function Dashboard() {
       {/* Target College Scraper Settings */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm mb-8">
         <h2 className="text-base font-bold text-slate-800 mb-2 flex items-center gap-2">
-          🔍 Target College Live Updates
+          Target College Live Updates
         </h2>
         <p className="text-xs text-slate-500 mb-4">
           Enter your college name or official website URL to scrape live placement drives, fests, and academic updates. Specifying the official website (e.g., iitb.ac.in) restricts scraping to that site for maximum accuracy.
@@ -158,7 +158,7 @@ function Dashboard() {
         </div>
 
         {scrapError && (
-          <p className="text-xs text-red-650 font-medium mt-3">⚠️ {scrapError}</p>
+          <p className="text-xs text-red-650 font-medium mt-3">{scrapError}</p>
         )}
       </div>
 
@@ -178,7 +178,6 @@ function Dashboard() {
           className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-blue-300 transition duration-300 cursor-pointer flex flex-col justify-between"
         >
           <div>
-            <span className="text-2xl">📚</span>
             <h3 className="text-base font-bold text-slate-800 mt-3">College Assistant</h3>
             <p className="text-xs text-slate-500 mt-1 leading-relaxed">
               Upload guidelines, syllabus documents, or event dates and ask the RAG help desk chatbot questions with source verification.
@@ -194,7 +193,6 @@ function Dashboard() {
           className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-blue-300 transition duration-300 cursor-pointer flex flex-col justify-between"
         >
           <div>
-            <span className="text-2xl">💼</span>
             <h3 className="text-base font-bold text-slate-800 mt-3">Job Assistant</h3>
             <p className="text-xs text-slate-500 mt-1 leading-relaxed">
               Upload your resume to check its ATS score compatibility, find live matching jobs using Tavily, and generate tailored cover letters.
@@ -210,7 +208,6 @@ function Dashboard() {
           className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-blue-300 transition duration-300 cursor-pointer flex flex-col justify-between"
         >
           <div>
-            <span className="text-2xl">🎤</span>
             <h3 className="text-base font-bold text-slate-800 mt-3">Interview Prep</h3>
             <p className="text-xs text-slate-500 mt-1 leading-relaxed">
               Choose your target role (AI Engineer, MLE, Software Engineer, etc.) and generate custom technical interview practice questions.
@@ -227,7 +224,7 @@ function Dashboard() {
         {/* Placement Updates */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm">
           <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-            🚀 Campus Placement Updates
+            Campus Placement Updates
           </h2>
           <ul className="space-y-3">
             {placements.map((p, idx) => (
@@ -251,7 +248,7 @@ function Dashboard() {
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                📅 Academic & Event Timeline
+                Academic & Event Timeline
               </h2>
               <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200">
                 <button
@@ -367,7 +364,7 @@ function Dashboard() {
                 {selectedEvent ? (
                   <div className="mt-4 p-3 bg-blue-50 border border-blue-150 rounded-xl transition duration-300">
                     <p className="text-xs font-bold text-blue-700 flex items-center gap-1">
-                      <span>📌 Event Detail:</span>
+                      <span>Event Detail:</span>
                     </p>
                     <p className="text-sm font-semibold text-slate-800 mt-1">{selectedEvent.title}</p>
                     <p className="text-xs text-slate-650 mt-0.5">{selectedEvent.description}</p>
@@ -389,7 +386,7 @@ function Dashboard() {
       {sources.length > 0 && (
         <div className="mt-8 bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm">
           <h2 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2">
-            🔗 Verified Search References
+            Verified Search References
           </h2>
           <p className="text-xs text-slate-500 mb-3">
             Click the links below to verify the scraped updates directly on the official university/source websites:
@@ -403,7 +400,7 @@ function Dashboard() {
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1.5 font-medium"
                 >
-                  🌐 {url}
+                  {url}
                 </a>
               </li>
             ))}
