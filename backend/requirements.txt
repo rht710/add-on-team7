@@ -11,3 +11,5 @@ openai
 python-dotenv
 tavily-python
 deepagents
+langchain-openai
+langchain-groq
