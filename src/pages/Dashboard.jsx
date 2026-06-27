@@ -27,6 +27,41 @@ function Dashboard() {
   const [activeCompanies, setActiveCompanies] = useState("45+");
   const [averageCtc, setAverageCtc] = useState("8.5");
 
+  // State and Helpers for Calendar Mode
+  const [isCalendarMode, setIsCalendarMode] = useState(false);
+  const [currentCalDate, setCurrentCalDate] = useState(new Date(2026, 7, 1)); // Aug 2026
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    return new Date(year, month, 1).getDay();
+  };
+
+  const prevMonth = () => {
+    setCurrentCalDate(new Date(currentCalDate.getFullYear(), currentCalDate.getMonth() - 1, 1));
+    setSelectedEvent(null);
+  };
+
+  const nextMonth = () => {
+    setCurrentCalDate(new Date(currentCalDate.getFullYear(), currentCalDate.getMonth() + 1, 1));
+    setSelectedEvent(null);
+  };
+
+  const monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const getEventsForDay = (dayNum) => {
+    const monthShort = monthNamesShort[currentCalDate.getMonth()].toLowerCase();
+    return events.filter(e => {
+      return e.month.toLowerCase() === monthShort && parseInt(e.day, 10) === dayNum;
+    });
+  };
+
   useEffect(() => {
     // Fetch dynamic documents count from backend
     const fetchDocCount = async () => {
@@ -85,7 +120,7 @@ function Dashboard() {
       <div className="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-8 mb-8 text-white shadow-lg relative overflow-hidden">
         <div className="relative z-10">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-            🎓 AI Campus & Career Assistant
+            AI Campus & Career Assistant
           </h1>
           <p className="text-blue-100 mt-2 max-w-xl text-sm md:text-base leading-relaxed">
             Welcome to your unified workspace. Manage college guidelines, track key campus events, analyze job profiles, and prepare for technical interviews.
@@ -99,7 +134,7 @@ function Dashboard() {
       {/* Target College Scraper Settings */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm mb-8">
         <h2 className="text-base font-bold text-slate-800 mb-2 flex items-center gap-2">
-          🔍 Target College Live Updates
+          Target College Live Updates
         </h2>
         <p className="text-xs text-slate-500 mb-4">
           Enter your college name or official website URL to scrape live placement drives, fests, and academic updates. Specifying the official website (e.g., iitb.ac.in) restricts scraping to that site for maximum accuracy.
@@ -123,7 +158,7 @@ function Dashboard() {
         </div>
 
         {scrapError && (
-          <p className="text-xs text-red-650 font-medium mt-3">⚠️ {scrapError}</p>
+          <p className="text-xs text-red-650 font-medium mt-3">{scrapError}</p>
         )}
       </div>
 
@@ -143,7 +178,6 @@ function Dashboard() {
           className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-blue-300 transition duration-300 cursor-pointer flex flex-col justify-between"
         >
           <div>
-            <span className="text-2xl">📚</span>
             <h3 className="text-base font-bold text-slate-800 mt-3">College Assistant</h3>
             <p className="text-xs text-slate-500 mt-1 leading-relaxed">
               Upload guidelines, syllabus documents, or event dates and ask the RAG help desk chatbot questions with source verification.
@@ -159,7 +193,6 @@ function Dashboard() {
           className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-blue-300 transition duration-300 cursor-pointer flex flex-col justify-between"
         >
           <div>
-            <span className="text-2xl">💼</span>
             <h3 className="text-base font-bold text-slate-800 mt-3">Job Assistant</h3>
             <p className="text-xs text-slate-500 mt-1 leading-relaxed">
               Upload your resume to check its ATS score compatibility, find live matching jobs using Tavily, and generate tailored cover letters.
@@ -175,7 +208,6 @@ function Dashboard() {
           className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-blue-300 transition duration-300 cursor-pointer flex flex-col justify-between"
         >
           <div>
-            <span className="text-2xl">🎤</span>
             <h3 className="text-base font-bold text-slate-800 mt-3">Interview Prep</h3>
             <p className="text-xs text-slate-500 mt-1 leading-relaxed">
               Choose your target role (AI Engineer, MLE, Software Engineer, etc.) and generate custom technical interview practice questions.
@@ -192,7 +224,7 @@ function Dashboard() {
         {/* Placement Updates */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm">
           <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-            🚀 Campus Placement Updates
+            Campus Placement Updates
           </h2>
           <ul className="space-y-3">
             {placements.map((p, idx) => (
@@ -212,24 +244,141 @@ function Dashboard() {
         </div>
 
         {/* Academic Calendar Events */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-            📅 Academic & Event Timeline
-          </h2>
-          <ul className="space-y-3">
-            {events.map((e, idx) => (
-              <li key={idx} className="border border-slate-100 p-3.5 rounded-xl bg-slate-50/50 flex gap-4 items-center">
-                <div className="bg-blue-50 text-blue-700 font-bold p-2.5 rounded-xl text-center min-w-[55px]">
-                  <p className="text-[10px] uppercase tracking-wider">{e.month}</p>
-                  <p className="text-sm">{e.day}</p>
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                Academic & Event Timeline
+              </h2>
+              <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+                <button
+                  onClick={() => setIsCalendarMode(false)}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-md transition-all duration-200 ${
+                    !isCalendarMode ? "bg-white text-slate-850 shadow-sm" : "text-slate-500 hover:text-slate-850"
+                  }`}
+                >
+                  Timeline
+                </button>
+                <button
+                  onClick={() => setIsCalendarMode(true)}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-md transition-all duration-200 ${
+                    isCalendarMode ? "bg-white text-slate-850 shadow-sm" : "text-slate-500 hover:text-slate-850"
+                  }`}
+                >
+                  Calendar
+                </button>
+              </div>
+            </div>
+
+            {!isCalendarMode ? (
+              <ul className="space-y-3">
+                {events.map((e, idx) => (
+                  <li key={idx} className="border border-slate-100 p-3.5 rounded-xl bg-slate-50/50 flex gap-4 items-center">
+                    <div className="bg-blue-50 text-blue-700 font-bold p-2.5 rounded-xl text-center min-w-[55px]">
+                      <p className="text-[10px] uppercase tracking-wider">{e.month}</p>
+                      <p className="text-sm">{e.day}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">{e.title}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{e.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div>
+                {/* Calendar Header */}
+                <div className="flex justify-between items-center mb-3 bg-slate-50 p-2 rounded-xl border border-slate-100">
+                  <button
+                    onClick={prevMonth}
+                    className="text-slate-600 hover:text-slate-905 font-bold p-1 px-2 rounded-lg hover:bg-slate-200 transition"
+                  >
+                    &larr;
+                  </button>
+                  <span className="text-sm font-bold text-slate-700">
+                    {currentCalDate.toLocaleString("default", { month: "long" })} {currentCalDate.getFullYear()}
+                  </span>
+                  <button
+                    onClick={nextMonth}
+                    className="text-slate-600 hover:text-slate-905 font-bold p-1 px-2 rounded-lg hover:bg-slate-200 transition"
+                  >
+                    &rarr;
+                  </button>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-800">{e.title}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{e.description}</p>
+
+                {/* Week Day Labels */}
+                <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                  <span>Su</span>
+                  <span>Mo</span>
+                  <span>Tu</span>
+                  <span>We</span>
+                  <span>Th</span>
+                  <span>Fr</span>
+                  <span>Sa</span>
                 </div>
-              </li>
-            ))}
-          </ul>
+
+                {/* Calendar Grid */}
+                <div className="grid grid-cols-7 gap-1.5">
+                  {(() => {
+                    const daysInMonth = getDaysInMonth(currentCalDate);
+                    const startDay = getFirstDayOfMonth(currentCalDate);
+                    const cells = [];
+
+                    // Empty spaces before first day
+                    for (let i = 0; i < startDay; i++) {
+                      cells.push(<div key={`empty-${i}`} className="aspect-square"></div>);
+                    }
+
+                    // Days of the month
+                    for (let d = 1; d <= daysInMonth; d++) {
+                      const dayEvents = getEventsForDay(d);
+                      const hasEvents = dayEvents.length > 0;
+                      cells.push(
+                        <button
+                          key={`day-${d}`}
+                          onClick={() => {
+                            if (hasEvents) {
+                              setSelectedEvent(dayEvents[0]);
+                            } else {
+                              setSelectedEvent(null);
+                            }
+                          }}
+                          className={`aspect-square text-xs rounded-lg flex flex-col items-center justify-center font-semibold transition-all relative border ${
+                            hasEvents
+                              ? "bg-blue-600 border-blue-600 text-white font-bold shadow-sm hover:bg-blue-700"
+                              : "bg-white hover:bg-slate-50 text-slate-700 border-slate-100 hover:border-slate-200"
+                          }`}
+                        >
+                          <span>{d}</span>
+                          {hasEvents && (
+                            <span className="w-1.5 h-1.5 bg-white rounded-full mt-0.5"></span>
+                          )}
+                        </button>
+                      );
+                    }
+                    return cells;
+                  })()}
+                </div>
+
+                {/* Event Details Card */}
+                {selectedEvent ? (
+                  <div className="mt-4 p-3 bg-blue-50 border border-blue-150 rounded-xl transition duration-300">
+                    <p className="text-xs font-bold text-blue-700 flex items-center gap-1">
+                      <span>Event Detail:</span>
+                    </p>
+                    <p className="text-sm font-semibold text-slate-800 mt-1">{selectedEvent.title}</p>
+                    <p className="text-xs text-slate-650 mt-0.5">{selectedEvent.description}</p>
+                  </div>
+                ) : (
+                  <div className="mt-4 p-3 bg-slate-50 border border-slate-100 rounded-xl text-center">
+                    <p className="text-xs text-slate-400 italic">
+                      Click a highlighted blue date to view event details.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -237,7 +386,7 @@ function Dashboard() {
       {sources.length > 0 && (
         <div className="mt-8 bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm">
           <h2 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2">
-            🔗 Verified Search References
+            Verified Search References
           </h2>
           <p className="text-xs text-slate-500 mb-3">
             Click the links below to verify the scraped updates directly on the official university/source websites:
@@ -251,7 +400,7 @@ function Dashboard() {
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1.5 font-medium"
                 >
-                  🌐 {url}
+                  {url}
                 </a>
               </li>
             ))}

@@ -3,13 +3,18 @@ import shutil
 import tempfile
 import re
 import json
+import traceback
+import requests
+import uvicorn
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
-from backend_service import KnowledgeBaseManager, DocumentProcessor
+from typing import List, Dict, Any
 from dotenv import load_dotenv
+from openai import OpenAI
+from tavily import TavilyClient
+from langchain_core.tools import tool
+from backend_service import KnowledgeBaseManager, DocumentProcessor
 
 # Load environment variables
 load_dotenv(override=True)
@@ -120,12 +125,6 @@ async def get_indexed_files():
 
 # ================= JOB ASSISTANT ENDPOINTS =================
 
-from langchain_openai import ChatOpenAI
-from langchain_groq import ChatGroq
-from tavily import TavilyClient
-from deepagents import create_deep_agent
-from langchain_core.tools import tool
-
 @tool
 def internet_search(
     query: str,
@@ -163,7 +162,6 @@ def internet_search(
     if serper_key:
         try:
             print("Attempting search using Serper...")
-            import requests
             headers = {
                 "X-API-KEY": serper_key,
                 "Content-Type": "application/json"
@@ -273,7 +271,6 @@ async def analyze_job_profile(
         # Track which LLM successfully worked for resume analysis
         working_llm_type = None
 
-        from openai import OpenAI
         if keys["openai_key"]:
             try:
                 client = OpenAI(api_key=keys["openai_key"])
@@ -384,8 +381,6 @@ async def analyze_job_profile(
             "jobs": jobs_list,
             "cover_letters": cover_letters
         }
-    except Exception as e:
-        import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -403,14 +398,14 @@ async def generate_interview_questions(request: InterviewRequest, keys: dict = D
     try:
         prompt = (
             f"You are a Senior Technical Interviewer. Generate exactly 3-5 realistic technical interview questions "
-            f"for the role of: {request.role}. Keep each question professional, clear, and relevant to modern industry standards."
-            f"Output the results ONLY as a JSON list of strings."
+            f"for the role of: {request.role}. For each question, provide a clear, concise, and professional model answer or explanation.\n"
+            f"Output the results ONLY as a JSON object with a key 'questions' containing a list of objects, "
+            f"where each object has 'question' and 'answer' keys. Example:\n"
+            f'{{"questions": [{{"question": "What is FAISS?", "answer": "FAISS is a library developed by Meta for efficient similarity search and clustering of dense vectors..."}}]}}'
         )
         
         response = None
         last_error = None
-        from openai import OpenAI
-
         if keys["openai_key"]:
             try:
                 client = OpenAI(api_key=keys["openai_key"])
@@ -441,7 +436,7 @@ async def generate_interview_questions(request: InterviewRequest, keys: dict = D
             raise Exception(f"Failed to generate questions. Both LLMs failed or were not configured. Last error: {last_error}")
             
         data = json.loads(response.choices[0].message.content)
-        questions = data.get("questions", data.get("interview_questions", list(data.values())[0]))
+        questions = data.get("questions", [])
         return {"questions": questions}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -536,8 +531,6 @@ async def scrape_college_updates(college_name: str, keys: dict = Depends(get_api
 
     response = None
     last_error = None
-    from openai import OpenAI
-
     if keys["openai_key"]:
         try:
             client = OpenAI(api_key=keys["openai_key"])
@@ -568,7 +561,7 @@ async def scrape_college_updates(college_name: str, keys: dict = Depends(get_api
     search_urls = list(set([res["url"] for res in search_results if res.get("url")]))
 
     if response is None:
-        return {
+        fallback_data = {
             "placements": [
                 {"title": f"Google Drive ({target_display_name})", "description": "SWE & AI Internships", "status": "Active"},
                 {"title": f"Microsoft Event ({target_display_name})", "description": "ML & Full Stack Engineering Roles", "status": "Upcoming"},
@@ -583,6 +576,8 @@ async def scrape_college_updates(college_name: str, keys: dict = Depends(get_api
             "average_ctc": "8.5",
             "sources": []
         }
+        kb.set_scraped_context(target_display_name, fallback_data)
+        return fallback_data
 
     try:
         data = json.loads(response.choices[0].message.content)
@@ -592,10 +587,12 @@ async def scrape_college_updates(college_name: str, keys: dict = Depends(get_api
             data["active_companies"] = "45+"
         if "average_ctc" not in data:
             data["average_ctc"] = "8.5"
+        
+        # Save to RAG context
+        kb.set_scraped_context(target_display_name, data)
         return data
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to parse LLM response: {str(e)}")
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
