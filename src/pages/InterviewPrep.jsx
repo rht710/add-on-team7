@@ -3,10 +3,20 @@ import { useState } from "react";
 function InterviewPrep() {
   const [role, setRole] = useState("AI Engineer");
   const [questions, setQuestions] = useState([
-    "Explain Retrieval-Augmented Generation (RAG).",
-    "What is FAISS?",
-    "Difference between embeddings and vectors?"
+    {
+      question: "Explain Retrieval-Augmented Generation (RAG).",
+      answer: "RAG is a technique that combines an LLM with external knowledge retrieval. First, a query retrieves relevant documents from a vector store, which are then appended to the prompt, enabling the LLM to generate fact-based, verified answers."
+    },
+    {
+      question: "What is FAISS?",
+      answer: "FAISS (Facebook AI Similarity Search) is a library developed by Meta for efficient similarity search and clustering of dense vectors. It is highly optimized to run on both CPU and GPU."
+    },
+    {
+      question: "Difference between embeddings and vectors?",
+      answer: "A vector is a general mathematical array of numbers. An embedding is a specific type of vector that represents semantic information (meaning) of text, image, or other high-dimensional data in a lower-dimensional space."
+    }
   ]);
+  const [expandedAnswers, setExpandedAnswers] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -29,6 +39,7 @@ function InterviewPrep() {
       const data = await response.json();
       if (data.questions && data.questions.length > 0) {
         setQuestions(data.questions);
+        setExpandedAnswers({});
       } else {
         throw new Error("No questions returned from API.");
       }
@@ -37,6 +48,13 @@ function InterviewPrep() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleAnswer = (index) => {
+    setExpandedAnswers((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
   };
 
   return (
@@ -83,11 +101,33 @@ function InterviewPrep() {
         </h2>
 
         <ul className="space-y-3">
-          {questions.map((question, index) => (
-            <li key={index} className="border border-slate-100 p-3 rounded-lg bg-slate-50 text-sm text-gray-700">
-              {question}
-            </li>
-          ))}
+          {questions.map((item, index) => {
+            const qText = typeof item === "string" ? item : item.question;
+            const aText = typeof item === "string" ? "No explanation available." : item.answer;
+            const isExpanded = !!expandedAnswers[index];
+
+            return (
+              <li key={index} className="border border-slate-100 p-4 rounded-xl bg-slate-50/50 flex flex-col gap-2">
+                <div className="flex justify-between items-start gap-4">
+                  <p className="text-sm font-semibold text-slate-800">{qText}</p>
+                  {aText && (
+                    <button
+                      onClick={() => toggleAnswer(index)}
+                      className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline shrink-0"
+                    >
+                      {isExpanded ? "Hide Answer" : "Show Answer"}
+                    </button>
+                  )}
+                </div>
+                {isExpanded && aText && (
+                  <div className="mt-2 text-xs text-slate-650 bg-white border border-slate-150 p-3 rounded-lg leading-relaxed shadow-sm">
+                    <p className="font-semibold text-slate-700 mb-1">Model Answer / Explanation:</p>
+                    {aText}
+                  </div>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

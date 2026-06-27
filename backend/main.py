@@ -403,8 +403,10 @@ async def generate_interview_questions(request: InterviewRequest, keys: dict = D
     try:
         prompt = (
             f"You are a Senior Technical Interviewer. Generate exactly 3-5 realistic technical interview questions "
-            f"for the role of: {request.role}. Keep each question professional, clear, and relevant to modern industry standards."
-            f"Output the results ONLY as a JSON list of strings."
+            f"for the role of: {request.role}. For each question, provide a clear, concise, and professional model answer or explanation.\n"
+            f"Output the results ONLY as a JSON object with a key 'questions' containing a list of objects, "
+            f"where each object has 'question' and 'answer' keys. Example:\n"
+            f'{{"questions": [{{"question": "What is FAISS?", "answer": "FAISS is a library developed by Meta for efficient similarity search and clustering of dense vectors..."}}]}}'
         )
         
         response = None
@@ -441,7 +443,7 @@ async def generate_interview_questions(request: InterviewRequest, keys: dict = D
             raise Exception(f"Failed to generate questions. Both LLMs failed or were not configured. Last error: {last_error}")
             
         data = json.loads(response.choices[0].message.content)
-        questions = data.get("questions", data.get("interview_questions", list(data.values())[0]))
+        questions = data.get("questions", [])
         return {"questions": questions}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
