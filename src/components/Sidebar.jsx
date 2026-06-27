@@ -1,4 +1,11 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+
+const navItems = [
+  { label: "Dashboard", to: "/" },
+  { label: "College Assistant", to: "/college" },
+  { label: "Job Assistant", to: "/job" },
+  { label: "Interview Prep", to: "/interview" },
+];
 
 function Sidebar() {
   return (
@@ -10,41 +17,21 @@ function Sidebar() {
 
       <ul className="space-y-4">
 
-        <li>
-          <Link
-            to="/"
-            className="block p-3 rounded-lg bg-slate-700"
-          >
-            Dashboard
-          </Link>
-        </li>
-
-        <li>
-          <Link
-            to="/college"
-            className="block p-3 rounded-lg hover:bg-slate-800"
-          >
-            College Assistant
-          </Link>
-        </li>
-
-        <li>
-          <Link
-            to="/job"
-            className="block p-3 rounded-lg hover:bg-slate-800"
-          >
-            Job Assistant
-          </Link>
-        </li>
-
-        <li>
-          <Link
-            to="/interview"
-            className="block p-3 rounded-lg hover:bg-slate-800"
-          >
-            Interview Prep
-          </Link>
-        </li>
+        {navItems.map((item) => (
+          <li key={item.to}>
+            <NavLink
+              to={item.to}
+              end={item.to === "/"}
+              className={({ isActive }) =>
+                `block p-3 rounded-lg transition-colors ${
+                  isActive ? "bg-slate-700 text-white" : "text-slate-300 hover:text-white"
+                }`
+              }
+            >
+              {item.label}
+            </NavLink>
+          </li>
+        ))}
 
       </ul>
     </div>

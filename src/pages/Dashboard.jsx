@@ -1,8 +1,9 @@
 import StatCard from "../components/StatCard";
+import Calendar from "../components/Calendar";
 
 function Dashboard() {
   return (
-    <div className="flex-1 p-8">
+    <div className="flex-1 p-8 overflow-auto">
 
       <h1 className="text-4xl font-bold mb-8">
         🎓 AI Campus & Career Assistant
@@ -19,9 +20,9 @@ function Dashboard() {
 
       </div>
 
-      {/* Placement Updates */}
+      {/* Placement Updates & Academic Calendar */}
 
-      <div className="grid grid-cols-2 gap-6 mt-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
 
         <div className="bg-white p-6 rounded-xl shadow">
 
@@ -47,28 +48,8 @@ function Dashboard() {
 
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow">
-
-          <h2 className="text-xl font-bold mb-4">
-            Upcoming Events
-          </h2>
-
-          <ul className="space-y-3">
-
-            <li className="border p-3 rounded">
-              AI Workshop
-            </li>
-
-            <li className="border p-3 rounded">
-              Hackathon
-            </li>
-
-            <li className="border p-3 rounded">
-              Placement Training
-            </li>
-
-          </ul>
-
+        <div>
+          <Calendar />
         </div>
 
       </div>
