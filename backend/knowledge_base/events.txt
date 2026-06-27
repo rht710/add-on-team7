@@ -1,5 +1,45 @@
-College Events 2026:
-- Cultural Fest: November 14, 2026.
-- Annual Hackathon: October 20, 2026.
-- Tech Fest (Aura): October 22 to 24, 2026.
-- Sports Day: November 30, 2026.
+College Events 2026-2027:
+
+1. Annual Hackathon (CodeStorm 2026)
+- Date: October 20, 2026
+- Registration Deadline: October 15, 2026
+- Description: A 24-hour coding challenge where students develop software or hardware prototypes to solve real-world problems. Cash prizes up to 1,50,000 INR for the winning teams. Key themes: GenAI, Smart Cities, and Sustainability.
+
+2. Tech Fest (Aura 2026)
+- Date: October 22 to 24, 2026
+- Location: Main Auditorium and Engineering Blocks
+- Description: The flagship technical festival featuring robot wars, coding challenges, drone racing, gaming tournaments, and paper presentation contests. Over 50 colleges participate annually.
+
+3. Cultural Fest (Spandan 2026)
+- Date: November 14, 2026
+- Description: Celebration of music, dance, theater, fashion, and fine arts. Features guest performances by national artists, food stalls from local vendors, and inter-collegiate drama competitions.
+
+4. Sports Day (Aeros 2026)
+- Date: November 30, 2026
+- Venue: University Sports Complex & Ground
+- Description: Annual athletics championships, inter-department track-and-field events, football, basketball, and cricket tournament finals.
+
+5. Seminar on Generative AI and Agentic Workflows
+- Date: September 15, 2026
+- Speaker: Dr. Sarah Jenkins (Industry Lead)
+- Description: Guest lecture and interactive workshop on building production-ready RAG applications and LLM agents. Open to all branches; mandatory for final year CS/IT students.
+
+6. Science & Innovation Exhibition (Inspire 2026)
+- Date: October 5, 2026
+- Description: Showcase of undergraduate research projects, IoT prototypes, and green energy innovations. Industry mentors and investors will judge the projects.
+
+7. Career Fair and Placement Preparation Workshop
+- Date: September 20 to 22, 2026
+- Description: Mock interviews, resume review clinics, and guest talks by HR representatives from leading tech and finance firms. Highly recommended for pre-final and final-year students.
+
+8. Annual Alumni Meet (Reconnect 2026)
+- Date: December 24, 2026
+- Description: Networking dinner and interactive panel discussions featuring distinguished alumni sharing their industry insights and career journeys.
+
+9. Inter-College Football Championship
+- Date: November 5 to 8, 2026
+- Description: A premier regional football tournament hosted on our home turf, featuring teams from 16 top universities.
+
+10. Entrepreneurship Summit (E-Summit 2027)
+- Date: January 18 to 20, 2027
+- Description: Includes pitching competitions (Shark Tank style), keynote addresses by startup founders, and panels discussing venture capital funding and incubation support.
